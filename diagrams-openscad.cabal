@@ -1,0 +1,30 @@
+Name:                diagrams-povray
+Version:             0.1
+Synopsis:            OpenSCAD solid modeling backend for diagrams EDSL
+Description:         XXX write me
+Homepage:            http://projects.haskell.org/diagrams
+License:             BSD3
+License-file:        LICENSE
+Author:              Daniel Bergey
+Maintainer:          diagrams-discuss@googlegroups.com
+Bug-reports:         http://github.com/bergey/diagrams-openscad/issues
+Category:            Graphics
+Build-type:          Simple
+Cabal-version:       >=1.10
+Tested-with:         GHC ==7.0.3
+Source-repository head
+  type:     git
+  location: http://github.com/bergey/diagrams-openscad.git
+
+Library
+  Exposed-modules:   Diagrams.Backend.OpenSCad
+  Other-Modules:     Diagrams.Backend.OpenSCad.Syntax
+  Hs-source-dirs:    src
+  Build-depends:     base >= 4.2 && < 4.7,
+                     diagrams-core >= 0.7 && < 0.8,
+                     diagrams-lib >= 0.7 && < 0.8,
+                     pretty >= 1.0.1.2 && < 1.2,
+                     vector-space >= 0.8 && < 0.9,
+                     colour >= 2.3 && < 2.4,
+                     lens >= 3.9 && < 3.11
+  Default-language:  Haskell2010
