@@ -17,7 +17,7 @@ Source-repository head
   location: http://github.com/bergey/diagrams-openscad.git
 
 Library
-  Exposed-modules:   Diagrams.Backend.OpenSCad
+  Exposed-modules:   Diagrams.Backend.OpenSCad, Diagrams.Backend.OpenSCad.CmdLine
   Hs-source-dirs:    src
   Build-depends:     base >= 4.2 && < 4.9,
                      diagrams-core >= 1.3 && < 1.4,
