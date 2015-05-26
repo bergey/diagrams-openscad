@@ -40,7 +40,7 @@ instance Backend OpenSCad V3 Double where
       unOsc (Osc is) = is
       go :: RTree OpenSCad V3 Double a -> Model3d
       go (Node (RPrim p) _) = unOsc $ D.render OpenSCad p
-      go (Node (RStyle s) ts) = foldMap go ts
+      go (Node (RStyle s) ts) = setColor s $ foldMap go ts
       go (Node _ ts) = foldMap go ts
 
 instance Renderable (Ellipsoid Double) OpenSCad where
@@ -69,3 +69,8 @@ asMatrix tr = ((c1^._x, c2^._x, c3^._x, t^._x),
                (0,0,0,1)
               ) where
   ([c1, c2, c3], t) = onBasis tr
+
+setColor :: Style V3 Double -> Model3d -> Model3d
+setColor sty m = case sty ^. _sc of
+    Nothing -> m
+    Just c -> O.color c m

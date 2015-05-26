@@ -10,4 +10,4 @@ import Diagrams.Backend.OpenSCad.CmdLine
 main = defaultMain ex
 
 ex :: Diagram OpenSCad
-ex = scale 20 $ cube <> sphere
+ex = scale 20 $ cube <> sphere # sc blue
