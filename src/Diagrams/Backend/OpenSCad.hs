@@ -44,13 +44,13 @@ instance Backend OpenSCad V3 Double where
       go (Node _ ts) = Osc . mconcat . map (unOsc . go) $ ts
 
 instance Renderable (Ellipsoid Double) OpenSCad where
-    render _ (Ellipsoid t) = Osc . multMatrix (asMatrix t) $ O.sphere 1 O.def
+    render _ (Ellipsoid t) = Osc . multMatrix (asMatrix t) $ O.sphere 1 (fs 0.1)
 
 instance Renderable (Box Double) OpenSCad where
     render _ (Box t) = Osc . multMatrix (asMatrix t) $ box 1 1 1
 
 instance Renderable (Frustum Double) OpenSCad where
-    render _ (Frustum r0 r1 t) = Osc . multMatrix (asMatrix t) $ obCylinder r0 1 r1 O.def
+    render _ (Frustum r0 r1 t) = Osc . multMatrix (asMatrix t) $ obCylinder r0 1 r1 (fs 0.1)
 
 -- null instances so that the same Diagram can be rendered in image and geometry backends
 instance Renderable (Camera l Double) OpenSCad where
