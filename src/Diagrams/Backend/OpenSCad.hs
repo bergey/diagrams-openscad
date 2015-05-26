@@ -36,12 +36,12 @@ instance Backend OpenSCad V3 Double where
     type Result OpenSCad V3 Double = String
     data Options OpenSCad V3 Double = OscOptions
 
-    renderRTree _ _ rt = O.render . unOsc . go $ rt where
+    renderRTree _ _ rt = O.render . go $ rt where
       unOsc (Osc is) = is
-      go :: RTree OpenSCad V3 Double a -> Render OpenSCad V3 Double
-      go (Node (RPrim p) _) = D.render OpenSCad p
-      go (Node (RStyle s) ts) = Osc . mconcat . map (unOsc . go) $ ts
-      go (Node _ ts) = Osc . mconcat . map (unOsc . go) $ ts
+      go :: RTree OpenSCad V3 Double a -> Model3d
+      go (Node (RPrim p) _) = unOsc $ D.render OpenSCad p
+      go (Node (RStyle s) ts) = foldMap go ts
+      go (Node _ ts) = foldMap go ts
 
 instance Renderable (Ellipsoid Double) OpenSCad where
     render _ (Ellipsoid t) = Osc . multMatrix (asMatrix t) $ O.sphere 1 (fs 0.1)
