@@ -10,12 +10,12 @@ module Diagrams.Backend.OpenSCad where
 import Control.Lens
 import           Data.Tree
 
-import Diagrams.Prelude hiding (fromDirection, tan)
+import Diagrams.Prelude as D
 import Diagrams.ThreeD
 import           Diagrams.Core.Types
 import           Diagrams.Core.Transform
 
-import Diagrams.Backend.OpenSCad.Syntax
+import Graphics.OpenSCAD as O
 
 import Data.Typeable
 
@@ -28,48 +28,44 @@ type instance V OpenSCad = V3
 type instance N OpenSCad = Double
 
 instance Monoid (Render OpenSCad V3 Double) where
-    mempty = Osc []
-    (Osc i1) `mappend` (Osc i2) = Osc (i1 ++ i2)
+    mempty = Osc mempty
+    (Osc i1) `mappend` (Osc i2) = Osc (i1 <> i2)
 
 instance Backend OpenSCad V3 Double where
-    data Render OpenSCad V3 Double = Osc [OTerm]
+    data Render OpenSCad V3 Double = Osc Model3d
     type Result OpenSCad V3 Double = String
     data Options OpenSCad V3 Double = OscOptions
 
-    renderRTree _ _ rt = PP.render . PP.vcat . map toOSC .unOsc . go $ rt where
+    renderRTree _ _ rt = O.render . unOsc . go $ rt where
       unOsc (Osc is) = is
       go :: RTree OpenSCad V3 Double a -> Render OpenSCad V3 Double
-      go (Node (RPrim p) _) = render OpenSCad p
-      go (Node (RStyle s) ts) = Osc . concatMap (unOsc . go) $ ts
-      go (Node _ ts) = Osc . concatMap (unOsc . go) $ ts
+      go (Node (RPrim p) _) = D.render OpenSCad p
+      go (Node (RStyle s) ts) = Osc . mconcat . map (unOsc . go) $ ts
+      go (Node _ ts) = Osc . mconcat . map (unOsc . go) $ ts
 
 instance Renderable (Ellipsoid Double) OpenSCad where
-    render _ (Ellipsoid t) = Osc [OBlock (asMatrix t) [OPrim $ OSphere 1]]
+    render _ (Ellipsoid t) = Osc . multMatrix (asMatrix t) $ O.sphere 1 O.def
 
 instance Renderable (Box Double) OpenSCad where
-    render _ (Box t) = Osc [OBlock (asMatrix t) [OPrim $ OCube 1 1 1]]
+    render _ (Box t) = Osc . multMatrix (asMatrix t) $ box 1 1 1
 
 instance Renderable (Frustum Double) OpenSCad where
-    render _ (Frustum r0 r1 t) = Osc [OBlock (asMatrix t) [OPrim $ OFrustrum 1 r0 r1]]
+    render _ (Frustum r0 r1 t) = Osc . multMatrix (asMatrix t) $ obCylinder r0 1 r1 O.def
 
 -- null instances so that the same Diagram can be rendered in image and geometry backends
 instance Renderable (Camera l Double) OpenSCad where
-    render _ _ = Osc []
+    render _ _ = mempty
 
 instance Renderable (ParallelLight Double) OpenSCad where
-        render _ _ = Osc []
+        render _ _ = mempty
 
 instance Renderable (PointLight Double) OpenSCad where
-        render _ _ = Osc []
+        render _ _ = mempty
 
-asMatrix :: T3 Double  -> OTransform
-asMatrix = OMultMatrix . matrixHomRep
-
--- [ [c1^._1, c2^._1, c3^._1, t^._1]
-  --                         , [c1^._2, c2^._2, c3^._2, t^._2]
-  --                         , [c1^._3, c2^._3, c3^._3, t^._3]
-  --                         , [0,      0,      0,      1    ]
-  --                         ]
-  -- where
-  --   ((v1,v2,v3), v4) = onBasis tr
-  --   (c1, c2, c3, t) = (unr3 v1, unr3 v2, unr3 v3, unr3 v4)
+asMatrix :: T3 Double -> TransMatrix
+asMatrix tr = ((c1^._x, c2^._x, c3^._x, t^._x),
+               (c1^._y, c2^._y, c3^._y, t^._y),
+               (c1^._z, c2^._z, c3^._z, t^._z),
+               (0,0,0,1)
+              ) where
+  ([c1, c2, c3], t) = onBasis tr
