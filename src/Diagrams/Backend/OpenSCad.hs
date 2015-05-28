@@ -1,23 +1,23 @@
-{-# LANGUAGE FlexibleInstances
-           , TypeSynonymInstances
-           , MultiParamTypeClasses
-           , TypeFamilies
-           , DeriveDataTypeable
-  #-}
+{-# LANGUAGE DeriveDataTypeable    #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE TypeSynonymInstances  #-}
 
 module Diagrams.Backend.OpenSCad where
 
-import Control.Lens
+import           Control.Lens
 import           Data.Tree
 
-import Diagrams.Prelude as D
-import Diagrams.ThreeD
-import           Diagrams.Core.Types
 import           Diagrams.Core.Transform
+import           Diagrams.Core.Types
+import           Diagrams.Prelude          as D
+import           Diagrams.ThreeD
 
-import Graphics.OpenSCAD as O
+import           Graphics.OpenSCAD         as O
 
-import Data.Typeable
+import           Data.Typeable
 
 import qualified Text.PrettyPrint.HughesPJ as PP
 
