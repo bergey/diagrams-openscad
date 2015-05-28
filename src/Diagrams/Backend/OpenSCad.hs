@@ -37,11 +37,16 @@ instance Backend OpenSCad V3 Double where
     data Options OpenSCad V3 Double = OscOptions
 
     renderRTree _ _ rt = O.render . go $ rt where
-      unOsc (Osc is) = is
       go :: RTree OpenSCad V3 Double a -> Model3d
       go (Node (RPrim p) _) = unOsc $ D.render OpenSCad p
       go (Node (RStyle s) ts) = setColor s $ foldMap go ts
       go (Node _ ts) = foldMap go ts
+
+unOsc :: Render OpenSCad V3 Double -> Model3d
+unOsc (Osc is) = is
+
+model3d :: (Renderable t OpenSCad, V t ~ V3, N t ~ Double) => t -> Model3d
+model3d = unOsc . D.render OpenSCad
 
 instance Renderable (Ellipsoid Double) OpenSCad where
     render _ (Ellipsoid t) = Osc . multMatrix (asMatrix t) $ O.sphere 1 (fs 0.1)
@@ -51,6 +56,14 @@ instance Renderable (Box Double) OpenSCad where
 
 instance Renderable (Frustum Double) OpenSCad where
     render _ (Frustum r0 r1 t) = Osc . multMatrix (asMatrix t) $ obCylinder r0 1 r1 (fs 0.1)
+
+instance Renderable (CSG Double) OpenSCad where
+    render _ (CsgEllipsoid p) = D.render OpenSCad p
+    render _ (CsgBox p) = D.render OpenSCad p
+    render _ (CsgFrustum p) = D.render OpenSCad p
+    render _ (CsgUnion csgs) = Osc . O.union . map model3d $ csgs
+    render _ (CsgIntersection csgs) = Osc . O.intersection . map model3d $ csgs
+    render _ (CsgDifference a b) = Osc $ O.difference (model3d a) (model3d b)
 
 -- null instances so that the same Diagram can be rendered in image and geometry backends
 instance Renderable (Camera l Double) OpenSCad where
