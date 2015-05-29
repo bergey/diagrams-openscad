@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                   #-}
 {-# LANGUAGE DeriveDataTypeable    #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
@@ -18,6 +19,10 @@ import           Diagrams.ThreeD
 import           Graphics.OpenSCAD         as O
 
 import           Data.Typeable
+
+#if __GLASGOW_HASKELL__ < 710
+import           Data.Foldable             (foldMap)
+#endif
 
 import qualified Text.PrettyPrint.HughesPJ as PP
 
