@@ -8,16 +8,15 @@
 
 module Diagrams.Backend.OpenSCad where
 
-import           Control.Lens
-import           Data.Tree
+import           Graphics.OpenSCAD         as O
 
 import           Diagrams.Core.Transform
 import           Diagrams.Core.Types
 import           Diagrams.Prelude          as D
 import           Diagrams.ThreeD
 
-import           Graphics.OpenSCAD         as O
-
+import           Control.Lens
+import           Data.Tree
 import           Data.Typeable
 
 #if __GLASGOW_HASKELL__ < 710
