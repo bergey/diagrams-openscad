@@ -1,3 +1,6 @@
+I would like to stop maintaining this project.  If you would like to
+adopt it, please drop me a line, and I'll hand it over.
+
 _diagrams-openscad_ is a very immature backend for [diagrams],
 targeting the [OpenSCAD] solid modeler.  Diagrams is a powerful,
 flexible, declarative domain-specific language for creating 2D & 3D
